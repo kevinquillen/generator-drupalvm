@@ -4,22 +4,13 @@ var util = require('util');
 var path = require('path');
 var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
+var fs = require('fs-extra');
 
 var DrupalVMGenerator = yeoman.generators.Base.extend({
-  init: function () {
-    this.on('end', function () {
-      if (!this.options['skip-install']) {
-        //this.getDrupal(this.drupalVersion);
-        this.getDrupalVM();
-      }
-    });
-  },
-
   askFor: function () {
     var done = this.async();
 
-    this.log(this.yeoman);
-    this.log(chalk.magenta('Welcome to the DrupalVM generator!'));
+    this.log(chalk.cyan('Welcome to the DrupalVM generator!'));
 
     var prompts = [{
       type: 'list',
@@ -31,7 +22,6 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
 
     this.prompt(prompts, function (props) {
       this.drupalVersion = props.drupalVersion;
-
       done();
     }.bind(this));
   },
@@ -41,12 +31,18 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
 
     console.log('Fetching DrupalVM. Please wait...');
 
-    require('simple-git')().clone(repo, 'drupalvm', function(error) {
-      if (error) {
-        console.log('There was a problem fetching DrupalVM from the repository.');
-      } else {
-        console.log('DrupalVM fetched, proceeding.');
-      }
+    require('simple-git')().clone(repo, './drupalvm', function(error) {
+      if (error) return console.error(error);
+
+      fs.copy('./drupalvm/example.config.yml', './drupalvm/config.yml', function (error) {
+        if (error) return console.error(error)
+      });
+
+      fs.copy('./drupalvm/example.drupal.make.yml', './drupalvm/drupal.make.yml', function (error) {
+        if (error) return console.error(error)
+      });
+
+      console.log('DrupalVM fetched, proceeding.');
     });
 
     return false;
