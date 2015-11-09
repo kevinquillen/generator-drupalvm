@@ -10,7 +10,9 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
   askFor: function () {
     var done = this.async();
 
-    this.log(chalk.cyan('Welcome to the DrupalVM generator!'));
+    this.log(chalk.cyan('~~ Welcome to the DrupalVM generator! ~~'));
+    this.log(chalk.yellow('This is a tool to help you get a DrupalVM configuration going for Windows or OSX/Linux rather quickly, with the VM contained in the same directory as the Drupal codebase.'));
+    this.log('');
 
     var prompts = [{
       type: 'list',
