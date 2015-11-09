@@ -1,0 +1,32 @@
+{
+  "name": "generator-drupalvm",
+  "version": "0.1.0",
+  "description": "A Yeoman generator for generating a Drupal VM stack based on drupalvm.com, configured for either Windows or OSX/Linux.",
+  "license": "MIT",
+  "main": "app/index.js",
+  "author": {
+    "name": "Kevin Quillen",
+    "url": "https://github.com/kevinquillen"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kevinquillen/generator-drupalvm"
+  },
+  "files": [
+    "app"
+  ],
+  "keywords": [
+    "yeoman-generator",
+    "drupal",
+    "drupalvm"
+  ],
+  "dependencies": {
+    "yeoman-generator": "^0.20.2"
+  },
+  "devDependencies": {
+    "chalk": "^1.1.1",
+    "path": "^0.12.7",
+    "simple-git": "^1.11.0",
+    "fs-extra": "^0.26.2"
+  }
+}
