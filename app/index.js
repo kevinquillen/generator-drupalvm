@@ -50,7 +50,30 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
         name: 'destination',
         message: 'What is the remote path of this site? This directory is used in vhost conf files.',
         default: '/var/www/sites'
-      }
+      },
+      {
+        type: 'list',
+        name: 'sync_type',
+        message: 'Select the method of file sync you want.',
+        choices: [
+          'nfs',
+          'rsync',
+          'smb'
+        ],
+        default: 'nfs'
+      },
+      {
+        type: 'input',
+        name: 'vagrant_memory',
+        message: 'How much memory (in MB) do you want to allot to this virtual machine?',
+        default: '2048'
+      },
+      {
+        type: 'input',
+        name: 'vagrant_cpus',
+        message: 'How many CPUs for this virtual machine?',
+        default: '2'
+      },
     ];
 
     this.prompt(prompts, function (props) {
@@ -58,6 +81,10 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
       this.vagrant_ip = props.vagrant_ip;
       this.vagrant_machine_name = props.vagrant_machine_name;
       this.local_path = props.local_path;
+      this.destination = props.destination;
+      this.sync_type = props.sync_type;
+      this.vagrant_memory = props.vagrant_memory;
+      this.vagrant_cpus = props.vagrant_cpus;
       done();
     }.bind(this));
   },
@@ -82,8 +109,14 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
       this.templatePath('configuration'),
       this.destinationPath(destination),
       {
+        vagrant_hostname: this.vagrant_hostname,
         vagrant_machine_name: this.vagrant_machine_name,
         vagrant_ip: this.vagrant_ip,
+        local_path: this.local_path,
+        destination: this.destination,
+        sync_type: this.sync_type,
+        vagrant_memory: this.vagrant_memory,
+        vagrant_cpus: this.vagrant_cpus,
       }
     );
   },

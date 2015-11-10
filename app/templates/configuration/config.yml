@@ -23,7 +23,7 @@ vagrant_synced_folders:
   # build_makefile: is 'true'.
   - local_path: <%= local_path %>
     destination: <%= destination %>
-    type: nfs
+    type: <%= sync_type %>
     create: true
 
 # Memory and CPU to use for this VM.
