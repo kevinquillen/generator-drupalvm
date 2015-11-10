@@ -1,0 +1,43 @@
+---
+- name: Ensure drush directory exists for vagrant user inside VM.
+  file: 'path="~/.drush" state=directory'
+  sudo: no
+
+- name: Configure drush aliases for vagrant user inside VM.
+  template:
+    src: ../templates/drupalvm-local.aliases.drushrc.php.j2
+    dest: "~/.drush/{{ vagrant_machine_name }}.aliases.drushrc.php"
+  sudo: no
+
+- name: Ensure drush directory exists for root user inside VM.
+  file: 'path="~/.drush" state=directory'
+
+- name: Configure drush aliases for root user inside VM.
+  template:
+    src: ../templates/drupalvm-local.aliases.drushrc.php.j2
+    dest: "~/.drush/{{ vagrant_machine_name }}.aliases.drushrc.php"
+
+- name: Check if local Drush configuration folder exists.
+  stat:
+    path: ~/.drush
+  register: local_drush_config_folder
+  delegate_to: 127.0.0.1
+  sudo: no
+  when: configure_local_drush_aliases
+
+- name: Create Drush configuration folder if it doesn't exist.
+  file:
+    path: ~/.drush
+    state: directory
+  delegate_to: 127.0.0.1
+  sudo: no
+  when: configure_local_drush_aliases and (local_drush_config_folder.stat.exists == false)
+
+# Note that this doesn't work for Windows, since Ansible's running in the VM.
+- name: Configure host machine drush aliases.
+  template:
+    src: ../templates/drupalvm.aliases.drushrc.php.j2
+    dest: "~/.drush/{{ vagrant_machine_name }}.aliases.drushrc.php"
+  delegate_to: 127.0.0.1
+  sudo: no
+  when: configure_local_drush_aliases
