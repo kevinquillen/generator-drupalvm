@@ -160,18 +160,7 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
     ];
 
     this.prompt(prompts, function (props) {
-      this.vagrant_hostname = props.vagrant_hostname;
-      this.vagrant_ip = props.vagrant_ip;
-      this.vagrant_machine_name = props.vagrant_machine_name;
-      this.local_path = props.local_path;
-      this.destination = props.destination;
-      this.sync_type = props.sync_type;
-      this.vagrant_memory = props.vagrant_memory;
-      this.vagrant_cpus = props.vagrant_cpus;
-      this.packages = props.packages;
-      this.php_version = props.php_version;
-      this.php_memory_limit = props.php_memory_limit;
-      this.solr_version = props.solr_version;
+      this.props = props;
       done();
     }.bind(this));
   },
@@ -196,19 +185,19 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
       this.templatePath('configuration'),
       this.destinationPath(destination),
       {
-        vagrant_hostname: this.vagrant_hostname,
-        vagrant_machine_name: this.vagrant_machine_name,
-        vagrant_ip: this.vagrant_ip,
-        local_path: this.local_path,
-        destination: this.destination,
-        sync_type: this.sync_type,
-        vagrant_memory: this.vagrant_memory,
-        vagrant_cpus: this.vagrant_cpus,
-        packages: this.packages,
-        php_version: this.php_version,
-        php_memory_limit: this.php_memory_limit,
-        solr_version: this._contains(this.packages, 'solr') ? this.solr_version : '4.10.4',
-        enable_xdebug: this._contains(this.packages, 'xdebug') ? 1 : 0,
+        vagrant_hostname: this.props.vagrant_hostname,
+        vagrant_machine_name: this.props.vagrant_machine_name,
+        vagrant_ip: this.props.vagrant_ip,
+        local_path: this.props.local_path,
+        destination: this.props.destination,
+        sync_type: this.props.sync_type,
+        vagrant_memory: this.props.vagrant_memory,
+        vagrant_cpus: this.props.vagrant_cpus,
+        packages: this.props.packages,
+        php_version: this.props.php_version,
+        php_memory_limit: this.props.php_memory_limit,
+        solr_version: this._contains(this.props.packages, 'solr') ? this.props.solr_version : '4.10.4',
+        enable_xdebug: this._contains(this.props.packages, 'xdebug') ? 1 : 0,
       }
     );
   },
