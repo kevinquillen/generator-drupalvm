@@ -72,8 +72,91 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
         type: 'input',
         name: 'vagrant_cpus',
         message: 'How many CPUs for this virtual machine?',
+        validate: function(input) {
+          return (!isNaN(input) && (input < 5) && (input >= 1));
+        },
         default: '2'
       },
+      {
+        type: 'checkbox',
+        message: 'Which packages would you like to install?',
+        name: 'packages',
+        choices: [
+          {
+            name: 'adminer',
+            checked: true
+          },
+          {
+            name: 'mailhog',
+            checked: true
+          },
+          {
+            name: 'memcached',
+            checked: false
+          },
+          {
+            name: 'nodejs',
+            checked: false
+          },
+          {
+            name: 'pimpmylog',
+            checked: false
+          },
+          {
+            name: 'ruby',
+            checked: false
+          },
+          {
+            name: 'selenium',
+            checked: false
+          },
+          {
+            name: 'solr',
+            checked: false
+          },
+          {
+            name: 'varnish',
+            checked: false
+          },
+          {
+            name: 'xdebug',
+            checked: false
+          },
+          {
+            name: 'xhprof',
+            checked: false
+          }
+        ]
+      },
+      {
+        type: 'list',
+        name: 'php_version',
+        message: 'What version of PHP do you want to use?',
+        choices: [
+          '5.5',
+          '5.6',
+          '7.0'
+        ],
+        default: '5.6'
+      },
+      {
+        type: 'input',
+        name: 'php_memory_limit',
+        message: 'How much memory do you want to allocated to PHP?',
+        validate: function(input) {
+          return (!isNaN(input) && (input < 1024) && (input >= 128));
+        },
+        default: '256'
+      },
+      {
+        type: 'input',
+        name: 'solr_version',
+        message: 'What version of Solr do you want to install?',
+        default: '4.10.4',
+        when: function(props) {
+          return this._contains(props.packages, 'solr');
+        }.bind(this)
+      }
     ];
 
     this.prompt(prompts, function (props) {
@@ -85,6 +168,10 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
       this.sync_type = props.sync_type;
       this.vagrant_memory = props.vagrant_memory;
       this.vagrant_cpus = props.vagrant_cpus;
+      this.packages = props.packages;
+      this.php_version = props.php_version;
+      this.php_memory_limit = props.php_memory_limit;
+      this.solr_version = props.solr_version;
       done();
     }.bind(this));
   },
@@ -117,6 +204,11 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
         sync_type: this.sync_type,
         vagrant_memory: this.vagrant_memory,
         vagrant_cpus: this.vagrant_cpus,
+        packages: this.packages,
+        php_version: this.php_version,
+        php_memory_limit: this.php_memory_limit,
+        solr_version: this._contains(this.packages, 'solr') ? this.solr_version : '4.10.4',
+        enable_xdebug: this._contains(this.packages, 'xdebug') ? 1 : 0,
       }
     );
   },
@@ -128,6 +220,16 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
   end: function() {
     // let user know next steps
   },
+
+  _contains: function(ar, match) {
+    for (var i = 0; i < ar.length; i++) {
+      if (ar[i] === match) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 });
 
 module.exports = DrupalVMGenerator;

@@ -6,7 +6,7 @@ vagrant_user: vagrant
 
 # If you need to run multiple instances of Drupal VM, set a unique hostname,
 # machine name, and IP address for each instance.
-vagrant_hostname: drupalvm.dev
+vagrant_hostname: <%= vagrant_hostname %>
 vagrant_machine_name: <%= vagrant_machine_name %>
 vagrant_ip: <%= vagrant_ip %>
 
@@ -176,8 +176,8 @@ firewall_allowed_tcp_ports:
 firewall_log_dropped_packets: false
 
 # PHP Configuration. Currently-supported versions: 5.5, 5.6, 7.0 (experimental).
-php_version: "5.6"
-php_memory_limit: "192M"
+php_version: "<%= php_version %>"
+php_memory_limit: "<%= php_memory_limit %>M"
 php_display_errors: "On"
 php_display_startup_errors: "On"
 php_realpath_cache_size: "1024K"
@@ -210,7 +210,7 @@ pimpmylog_install_dir: /usr/share/php/pimpmylog
 pimpmylog_grant_all_privs: true
 
 # XDebug configuration. XDebug is disabled by default for better performance.
-php_xdebug_default_enable: 0
+php_xdebug_default_enable: <%= enable_xdebug %>
 php_xdebug_coverage_enable: 0
 php_xdebug_cli_enable: 0
 php_xdebug_remote_enable: 1
@@ -220,7 +220,7 @@ php_xdebug_idekey: PHPSTORM
 php_xdebug_max_nesting_level: 256
 
 # Solr Configuration (if enabled above).
-solr_version: "4.10.4"
+solr_version: "<%= solr_version %>"
 solr_xms: "64M"
 solr_xmx: "128M"
 
