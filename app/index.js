@@ -11,16 +11,31 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
   prompting: function () {
     var done = this.async();
 
-    this.log(chalk.cyan('~~ Welcome to the DrupalVM generator! ~~'));
-    this.log(chalk.yellow('This is a tool to help you get a DrupalVM configuration going for Windows or OSX/Linux rather quickly, with the VM contained in the same directory as the Drupal codebase.'));
-    this.log('');
-    this.log(chalk.magenta('Prerequisites: Vagrant'));
-    this.log(chalk.magenta('  -- vagrant-cachier plugin'));
-    this.log(chalk.magenta('  -- vagrant-hostsupdater plugin'));
-    this.log(chalk.magenta('  -- vagrant-auto_network plugin'));
-    this.log('');
+    console.log("\n\n");
+    console.log(chalk.green("   _____                         ___      ____  __    _____                           _            "));
+    console.log(chalk.green("  |  __ \\                       | \\ \\    / /  \\/  |  / ____|                         | |            "));
+    console.log(chalk.green("  | |  | |_ __ _   _ _ __   __ _| |\\ \\  / /| \\  / | | |  __  ___ _ __   ___ _ __ __ _| |_ ___  _ __ "));
+    console.log(chalk.green("  | |  | | '__| | | | '_ \\ / _` | | \\ \\/ / | |\\/| | | | |_ |/ _ \\ '_ \\ / _ \\ '__/ _` | __/ _ \\| \\'__|"));
+    console.log(chalk.green("  | |__| | |  | |_| | |_) | (_| | |  \\  /  | |  | | | |__| |  __/ | | |  __/ | | (_| | || (_) | |"));
+    console.log(chalk.green("  |_____/|_|   \\__,_| .__/ \\__,_|_|   \\/   |_|  |_|  \\_____|\\___|_| |_|\\___|_|  \\__,_|\\__\\___/|_|"));
+    console.log(chalk.green("                    | |"));
+    console.log(chalk.green("                    |_|"));
+
+    console.log("\n\n     Generator created by " + chalk.cyan("@kevinquillen") + " of " + chalk.green("Velir") + ".\n     Repo: https://github.com/kevinquillen/generator-drupalvm");
+    console.log("\n     This is a tool helps you kickstart a new Drupal project with the DrupalVM.");
+    console.log("\n     DrupalVM is by " + chalk.yellow("@geerlingguy") + "\n     http://drupalvm.com\n\n");
 
     var prompts = [
+      {
+        type: 'list',
+        name: 'drupal_version',
+        message: 'What version of Drupal do you want to install?',
+        choices: [
+          '7',
+          '8'
+        ],
+        default: '7'
+      },
       {
         type: 'input',
         name: 'vagrant_hostname',
@@ -31,25 +46,13 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
         type: 'input',
         name: 'vagrant_machine_name',
         message: 'Enter a machine name for the VM. No spaces or symbols.',
-        default: 'drupalvm'
+        default: function(props) { return props.vagrant_hostname }.bind(this)
       },
       {
         type: 'input',
         name: 'vagrant_ip',
-        message: 'What IP do you want to use for the VM? Enter 0.0.0.0 if you plan on allowing vagrant-auto_network plugin to select and assign one for you.',
+        message: 'What IP do you want to use for the VM?',
         default: '192.168.88.88'
-      },
-      {
-        type: 'input',
-        name: 'local_path',
-        message: 'What is the local path of this project? This is used when mounting the host machine drive to the virtual machine.',
-        default: this.destinationRoot()
-      },
-      {
-        type: 'input',
-        name: 'destination',
-        message: 'What is the remote path of this site? This directory is used in vhost conf files.',
-        default: '/var/www/sites'
       },
       {
         type: 'list',
@@ -170,11 +173,11 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
   },
 
   configuring: function() {
-    mkdirp.sync(this.destinationRoot() + '/drupalvm');
+    mkdirp.sync(this.destinationRoot() + '/tools/drupalvm');
   },
 
   writing: function() {
-    var destination = this.destinationRoot() + '/drupalvm';
+    var destination = this.destinationRoot() + '/tools/drupalvm';
 
     this.fs.copy(
       this.templatePath('drupalvm'),
@@ -185,11 +188,11 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
       this.templatePath('configuration'),
       this.destinationPath(destination),
       {
+        drupal_version: this.props.drupal_version,
+        drupal_core_branch: (this.props.drupal_version == 7) ? '7.x' : '8.0.x',
         vagrant_hostname: this.props.vagrant_hostname,
         vagrant_machine_name: this.props.vagrant_machine_name,
         vagrant_ip: this.props.vagrant_ip,
-        local_path: this.props.local_path,
-        destination: this.props.destination,
         sync_type: this.props.sync_type,
         vagrant_memory: this.props.vagrant_memory,
         vagrant_cpus: this.props.vagrant_cpus,
@@ -198,6 +201,17 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
         php_memory_limit: this.props.php_memory_limit,
         solr_version: this._contains(this.props.packages, 'solr') ? this.props.solr_version : '4.10.4',
         enable_xdebug: this._contains(this.props.packages, 'xdebug') ? 1 : 0,
+        install_adminer: this._contains(this.props.packages, 'adminer') ? '- adminer' : '#- adminer',
+        install_mailhog: this._contains(this.props.packages, 'mailhog') ? '- mailhog' : '#- mailhog',
+        install_memcached: this._contains(this.props.packages, 'memcached') ? '- memcached' : '#- memcached',
+        install_nodejs: this._contains(this.props.packages, 'nodejs') ? '- nodejs' : '#- nodejs',
+        install_pimpmylog: this._contains(this.props.packages, 'pimpmylog') ? '- pimpmylog' : '#- pimpmylog',
+        install_ruby: this._contains(this.props.packages, 'ruby') ? '- ruby' : '#- ruby',
+        install_selenium: this._contains(this.props.packages, 'selenium') ? '- selenium' : '#- selenium',
+        install_solr: this._contains(this.props.packages, 'solr') ? '- solr' : '#- solr',
+        install_varnish: this._contains(this.props.packages, 'varnish') ? '- varnish' : '#- varnish',
+        install_xdebug: this._contains(this.props.packages, 'xdebug') ? '- xdebug' : '#- xdebug',
+        install_xhprof: this._contains(this.props.packages, 'xhprof') ? '- xhprof' : '#- xhprof',
       }
     );
   },
