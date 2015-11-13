@@ -257,7 +257,7 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
     var destination = this.destinationRoot() + '/tools/drupalvm';
     console.log("\n" + chalk.green("Complete!"));
     console.log("\nNext steps:\n   -- Navigate to " + chalk.yellow(destination) + " and run the " + chalk.magenta("vagrant up") + " command.");
-    console.log("   -- Read the README in (tbd).");
+    console.log("   -- Read the README at " + destination + '/README.md or online at http://docs.drupalvm.com/en/latest');
   },
 
   _contains: function(ar, match) {
