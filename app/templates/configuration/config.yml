@@ -31,7 +31,7 @@ vagrant_memory: <%= vagrant_memory %>
 vagrant_cpus: <%= vagrant_cpus %>
 
 # The web server software to use. Can be either 'apache' or 'nginx'.
-drupalvm_webserver: apache
+drupalvm_webserver: <%= drupalvm_webserver %>
 
 # Set this to false if you are using a different site deployment strategy and
 # would like to configure 'vagrant_synced_folders' and 'apache_vhosts' manually.

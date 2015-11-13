@@ -81,6 +81,16 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
         default: '2'
       },
       {
+        type: 'list',
+        name: 'drupalvm_webserver',
+        message: 'Do you want to use Apache or Nginx?',
+        choices: [
+          'apache',
+          'nginx',
+        ],
+        default: 'apache'
+      },
+      {
         type: 'checkbox',
         message: 'Which packages would you like to install?',
         name: 'packages',
@@ -196,6 +206,7 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
         sync_type: this.props.sync_type,
         vagrant_memory: this.props.vagrant_memory,
         vagrant_cpus: this.props.vagrant_cpus,
+        drupalvm_webserver: this.props.drupalvm_webserver,
         packages: this.props.packages,
         php_version: this.props.php_version,
         php_memory_limit: this.props.php_memory_limit,
