@@ -1,4 +1,0 @@
-DrupalVM Generator
-====
-
-Getting started
