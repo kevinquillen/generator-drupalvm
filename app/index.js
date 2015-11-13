@@ -21,7 +21,12 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
 
     console.log("\n\n     Generator created by " + chalk.cyan("@kevinquillen") + " of " + chalk.green("Velir") + ".\n     Repo: https://github.com/kevinquillen/generator-drupalvm");
     console.log("\n     This is a tool helps you kickstart a new Drupal project with the DrupalVM.");
-    console.log("\n     DrupalVM is by " + chalk.yellow("@geerlingguy") + "\n     http://drupalvm.com\n\n");
+    console.log("\n     DrupalVM is by " + chalk.yellow("@geerlingguy") + "\n     http://drupalvm.com");
+
+    console.log("\n     Suggested Vagrant plugins:");
+    console.log("       - " + chalk.red("vagrant-cachier") + " (https://github.com/fgrehm/vagrant-cachier)");
+    console.log("       - " + chalk.red("vagrant-hostsupdater") + "  (https://github.com/cogitatio/vagrant-hostsupdater)");
+    console.log("       - " + chalk.red("vagrant-auto_network") + "  (https://github.com/oscar-stack/vagrant-auto_network\n\n");
 
     var prompts = [
       {
