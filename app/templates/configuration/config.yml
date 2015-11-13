@@ -35,12 +35,12 @@ drupalvm_webserver: <%= drupalvm_webserver %>
 
 # Set this to false if you are using a different site deployment strategy and
 # would like to configure 'vagrant_synced_folders' and 'apache_vhosts' manually.
-build_makefile: true
+build_makefile: <%= install_drupal %>
 drush_makefile_path: /vagrant/drupal.make.yml
 
 # Set this to false if you don't need to install drupal (using the drupal_*
 # settings below), but instead copy down a database (e.g. using drush sql-sync).
-install_site: true
+install_site: <%= install_drupal %>
 
 # Settings for building a Drupal site from a makefile (if 'build_makefile:'
 # is 'true').
@@ -79,13 +79,13 @@ apache_vhosts:
   - servername: "{{ drupal_domain }}"
     documentroot: "{{ drupal_core_path }}"
 
-  - servername: "adminer.drupalvm.dev"
+  - servername: "adminer.{{ drupal_domain }}"
     documentroot: "/opt/adminer"
 
-  - servername: "xhprof.drupalvm.dev"
+  - servername: "xhprof.{{ drupal_domain }}"
     documentroot: "/usr/share/php/xhprof_html"
 
-  - servername: "pimpmylog.drupalvm.dev"
+  - servername: "pimpmylog.{{ drupal_domain }}"
     documentroot: "/usr/share/php/pimpmylog"
 
 apache_remove_default_vhost: true
@@ -102,15 +102,15 @@ nginx_hosts:
     root: "{{ drupal_core_path }}"
     is_php: true
 
-  - server_name: "adminer.drupalvm.dev"
+  - server_name: "adminer.{{ drupal_domain }}"
     root: "/opt/adminer"
     is_php: true
 
-  - server_name: "xhprof.drupalvm.dev"
+  - server_name: "xhprof.{{ drupal_domain }}"
     root: "/usr/share/php/xhprof_html"
     is_php: true
 
-  - server_name: "pimpmylog.drupalvm.dev"
+  - server_name: "pimpmylog.{{ drupal_domain }}"
     root: "/usr/share/php/pimpmylog"
     is_php: true
 

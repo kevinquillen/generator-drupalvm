@@ -1,11 +1,9 @@
 'use strict';
 
-var util = require('util');
-var path = require('path');
 var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
-var fs = require('fs-extra');
 var mkdirp = require('mkdirp');
+var nodefs = require('fs');
 
 var DrupalVMGenerator = yeoman.generators.Base.extend({
   prompting: function () {
@@ -27,6 +25,12 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
 
     var prompts = [
       {
+        type: 'confirm',
+        name: 'install_drupal',
+        message: 'Do you need to install Drupal? If not, you should provide your own instance of Drupal at ' + this.destinationRoot() + '/docroot',
+        default: 'Y'
+      },
+      {
         type: 'list',
         name: 'drupal_version',
         message: 'What version of Drupal do you want to install?',
@@ -34,7 +38,10 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
           '7',
           '8'
         ],
-        default: '7'
+        default: '7',
+        when: function(props) {
+          return this.install_drupal;
+        }.bind(this)
       },
       {
         type: 'input',
@@ -198,6 +205,7 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
       this.templatePath('configuration'),
       this.destinationPath(destination),
       {
+        install_drupal: this.props.install_drupal,
         drupal_version: this.props.drupal_version,
         drupal_core_branch: (this.props.drupal_version == 7) ? '7.x' : '8.0.x',
         vagrant_hostname: this.props.vagrant_hostname,
@@ -225,6 +233,15 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
         install_xhprof: this._contains(this.props.packages, 'xhprof') ? '- xhprof' : '#- xhprof',
       }
     );
+
+    // remove the default directory created by the webserver
+    nodefs.rmdirSync(this.destinationRoot() + '/html');
+
+    // create or append to the root level .gitignore file
+    // exclude .vagrant and .idea (PHPStorm project config)
+    nodefs.appendFile(this.destinationRoot() + '/.gitignore', '\n.vagrant\n.idea', function (error) {
+      if (error) console.log(error);
+    });
   },
 
   install: function() {
