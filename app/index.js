@@ -239,12 +239,9 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
       }
     );
 
-    // remove the default directory created by the webserver
-    nodefs.rmdirSync(this.destinationRoot() + '/html');
-
     // create or append to the root level .gitignore file
     // exclude .vagrant and .idea (PHPStorm project config)
-    nodefs.appendFile(this.destinationRoot() + '/.gitignore', '\n.vagrant\n.idea', function (error) {
+    nodefs.appendFile(this.destinationRoot() + '/.gitignore', '\n.vagrant\n.idea\nnode_modules', function (error) {
       if (error) console.log(error);
     });
   },
