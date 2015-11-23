@@ -1,6 +1,6 @@
 {
   "name": "generator-drupalvm",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Yeoman generator for generating a Drupal VM stack based on drupalvm.com, configured for either Windows or OSX/Linux.",
   "license": "MIT",
   "main": "app/index.js",
