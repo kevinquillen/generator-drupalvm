@@ -35,6 +35,7 @@ describe('drupalvm:app', function () {
         .on('end', function () {
           assert.file(expectedFiles);
           assert.fileContent(vm_config, /install_site: true/);
+          assert.fileContent(vm_config, /drupal_major_version: 7/);
           assert.fileContent(vm_config, /vagrant_hostname: mochatest/);
           assert.fileContent(vm_config, /vagrant_machine_name: mochatest/);
           assert.fileContent(vm_config, /drupalvm_webserver: nginx/);
