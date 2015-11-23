@@ -45,7 +45,7 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
         ],
         default: '7',
         when: function(props) {
-          return this.install_drupal;
+          return props.install_drupal;
         }.bind(this)
       },
       {
