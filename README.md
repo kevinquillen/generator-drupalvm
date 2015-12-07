@@ -6,7 +6,13 @@ This is a Yeoman generator for quickly spawning configured VMs or new projects u
 
 This generator can either jump start a new Drupal project with a Vagrant build for you, or add a Vagrant build to an existing project.
 
-First, you must have npm and yeoman installed. Grab this generator with the following command:
+First, you must have npm and yeoman installed. [Follow the docs on the npm site to install Node and NPM](https://docs.npmjs.com/getting-started/installing-node).
+
+Install Yeoman with NPM:
+    
+    npm install -g yo
+
+Grab this generator with the following command:
 
     npm install -g generator-drupalvm
 
