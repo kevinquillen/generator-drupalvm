@@ -15,7 +15,7 @@ vagrant_ip: <%= vagrant_ip %>
 # See: https://docs.vagrantup.com/v2/networking/public_network.html
 vagrant_public_ip: ""
 
-# A list of synced folders, with the keys 'local_path', 'destination', 'id', and
+# A list of synced folders, with the keys 'local_path', 'destination', and
 # a 'type' of [nfs|rsync|smb] (leave empty for slow native shares). See
 # http://docs.drupalvm.com/en/latest/extras/syncing-folders/ for more info.
 vagrant_synced_folders:
@@ -180,6 +180,7 @@ php_version: "<%= php_version %>"
 php_memory_limit: "<%= php_memory_limit %>M"
 php_display_errors: "On"
 php_display_startup_errors: "On"
+php_enable_php_fpm: 1
 php_realpath_cache_size: "1024K"
 php_sendmail_path: "/usr/sbin/ssmtp -t"
 php_opcache_enabled_in_ini: true
