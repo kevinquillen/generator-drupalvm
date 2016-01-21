@@ -3,6 +3,7 @@
 # geerlingguy/ubuntu1204, parallels/ubuntu-14.04, etc.
 vagrant_box: geerlingguy/ubuntu1404
 vagrant_user: vagrant
+vagrant_synced_folder_default_type: nfs
 
 # If you need to run multiple instances of Drupal VM, set a unique hostname,
 # machine name, and IP address for each instance.
@@ -78,6 +79,8 @@ configure_local_drush_aliases: true
 apache_vhosts:
   - servername: "{{ drupal_domain }}"
     documentroot: "{{ drupal_core_path }}"
+    extra_parameters: |
+          ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ drupal_core_path }}"
 
   - servername: "adminer.{{ drupal_domain }}"
     documentroot: "/opt/adminer"
@@ -153,6 +156,7 @@ nodejs_version: "0.12"
 nodejs_npm_global_packages: []
 
 # `ruby` must be in installed_extras for this to work.
+ruby_install_gems_user: "{{ vagrant_user }}"
 ruby_install_gems: []
 
 # You can configure almost anything else on the server in the rest of this file.
@@ -180,7 +184,7 @@ php_version: "<%= php_version %>"
 php_memory_limit: "<%= php_memory_limit %>M"
 php_display_errors: "On"
 php_display_startup_errors: "On"
-php_enable_php_fpm: 1
+php_enable_php_fpm: true
 php_realpath_cache_size: "1024K"
 php_sendmail_path: "/usr/sbin/ssmtp -t"
 php_opcache_enabled_in_ini: true
@@ -192,6 +196,11 @@ composer_path: /usr/bin/composer
 composer_home_path: '/home/vagrant/.composer'
 # composer_global_packages:
 #   - { name: phpunit/phpunit, release: '@stable' }
+
+# Run specified scripts after VM is provisioned. Path is relative to the
+# `provisioning/playbook.yml` file.
+post_provision_scripts: []
+  # - "../examples/scripts/configure-solr.sh"
 
 # MySQL Configuration.
 mysql_root_password: root
