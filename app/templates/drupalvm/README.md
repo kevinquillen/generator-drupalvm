@@ -12,15 +12,16 @@ It will install the following on an Ubuntu 14.04 (by default) linux VM:
   - PHP 5.6.x (configurable)
   - MySQL 5.5.x
   - Drush (configurable)
-  - Drupal Console (if using Drupal 8+)
   - Drupal 6.x, 7.x, or 8.x.x (configurable)
   - Optional:
+    - Drupal Console
     - Varnish 4.x (configurable)
     - Apache Solr 4.10.x (configurable)
     - Node.js 0.12 (configurable)
     - Selenium, for testing your sites via Behat
     - Ruby
     - Memcached
+    - Redis
     - XHProf, for profiling your code
     - XDebug, for debugging your code
     - Adminer, for accessing databases directly
@@ -60,7 +61,7 @@ Note for Faster Provisioning (Mac/Linux only): *[Install Ansible](http://docs.an
 
 Note for Linux users: *If NFS is not already installed on your host, you will need to install it to use the default NFS synced folder configuration. See guides for [Debian/Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nfs-mount-on-ubuntu-14-04), [Arch](https://wiki.archlinux.org/index.php/NFS#Installation), and [RHEL/CentOS](https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nfs-mount-on-centos-6).*
 
-Note on versions: *Please make sure you're running the latest stable version of Vagrant, VirtualBox, and Ansible, as the current version of Drupal VM is tested with the latest releases. As of August 2015: Vagrant 1.7.4, VirtualBox 5.0.2, and Ansible 1.9.2.*
+Note on versions: *Please make sure you're running the latest stable version of Vagrant, VirtualBox, and Ansible, as the current version of Drupal VM is tested with the latest releases. As of August 2015: Vagrant 1.8.0, VirtualBox 5.0.12, and Ansible 2.0.0.*
 
 ### 2 - Build the Virtual Machine
 
@@ -101,22 +102,7 @@ If you don't want or need one or more of these extras, just delete them or comme
 
 ## Using Drupal VM
 
-Drupal VM is built to integrate with every developer's workflow. Many guides for using Drupal VM for common development tasks are available on the [Drupal VM documentation site](http://docs.drupalvm.com):
-
-  - [Syncing Folders](http://docs.drupalvm.com/en/latest/extras/syncing-folders/)
-  - [Connect to the MySQL Database](http://docs.drupalvm.com/en/latest/extras/mysql/)
-  - [Use Apache Solr for Search](http://docs.drupalvm.com/en/latest/extras/solr/)
-  - [Use Drush with Drupal VM](http://docs.drupalvm.com/en/latest/extras/drush/)
-  - [Use Drupal Console with Drupal VM](http://docs.drupalvm.com/en/latest/extras/drupal-console/)
-  - [Use Varnish with Drupal VM](http://docs.drupalvm.com/en/latest/extras/varnish/)
-  - [Use MariaDB instead of MySQL](http://docs.drupalvm.com/en/latest/extras/mariadb/)
-  - [View Logs with Pimp my Log](http://docs.drupalvm.com/en/latest/extras/pimpmylog/)
-  - [Profile Code with XHProf](http://docs.drupalvm.com/en/latest/extras/xhprof/)
-  - [Debug Code with XDebug](http://docs.drupalvm.com/en/latest/extras/xdebug/)
-  - [Catch Emails with MailHog](http://docs.drupalvm.com/en/latest/extras/mailhog/)
-  - [Test with Behat and Selenium](http://docs.drupalvm.com/en/latest/extras/behat/)
-  - [PHP 7 on Drupal VM](http://docs.drupalvm.com/en/latest/other/php-7/)
-  - [Drupal 6 Notes](http://docs.drupalvm.com/en/latest/other/drupal-6/)
+Drupal VM is built to integrate with every developer's workflow. Many guides for using Drupal VM for common development tasks are available on the [Drupal VM documentation site](http://docs.drupalvm.com).
 
 ## Other Notes
 

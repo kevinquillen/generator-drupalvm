@@ -1,5 +1,6 @@
 ---
 - hosts: all
+  become: yes
 
   vars_files:
     - ../config.yml
@@ -10,6 +11,11 @@
     - include: tasks/init-redhat.yml
       when: ansible_os_family == 'RedHat'
 
+    - name: Set the PHP webserver daemon correctly when nginx is in use.
+      set_fact:
+        php_webserver_daemon: nginx
+      when: drupalvm_webserver == 'nginx'
+
   roles:
     # Essential roles.
     - { role: geerlingguy.repo-remi, when: ansible_os_family == 'RedHat' }
@@ -17,6 +23,7 @@
     - geerlingguy.git
     - geerlingguy.postfix
     - { role: geerlingguy.apache, when: drupalvm_webserver == 'apache' }
+    - { role: geerlingguy.apache-php-fpm, when: drupalvm_webserver == 'apache' }
     - { role: geerlingguy.nginx, when: drupalvm_webserver == 'nginx' }
     - geerlingguy.mysql
     - geerlingguy.php
@@ -24,9 +31,9 @@
     - geerlingguy.php-mysql
     - geerlingguy.composer
     - geerlingguy.drush
-    - { role: geerlingguy.drupal-console, when: drupal_major_version > 7 }
 
     # Conditionally-installed roles.
+    - { role: geerlingguy.drupal-console, when: 'drupal_major_version > 7 and "drupalconsole" in installed_extras' }
     - { role: geerlingguy.memcached, when: '"memcached" in installed_extras' }
     - { role: geerlingguy.php-memcached, when: '"memcached" in installed_extras' }
     - { role: geerlingguy.php-xdebug, when: '"xdebug" in installed_extras' }
@@ -36,6 +43,8 @@
     - { role: geerlingguy.daemonize, when: '"mailhog" in installed_extras' }
     - { role: geerlingguy.mailhog, when: '"mailhog" in installed_extras' }
     - { role: geerlingguy.nodejs, when: '"nodejs" in installed_extras' }
+    - { role: geerlingguy.redis, when: '"redis" in installed_extras' }
+    - { role: geerlingguy.php-redis, when: '"redis" in installed_extras' }
     - { role: geerlingguy.ruby, when: '"ruby" in installed_extras' }
     - { role: geerlingguy.java, when: '"solr" in installed_extras or "selenium" in installed_extras' }
     - { role: arknoll.selenium, when: '"selenium" in installed_extras' }
@@ -66,3 +75,7 @@
 
     - include: tasks/drush-aliases.yml
     - include: tasks/cron.yml
+
+    - name: Run configured post-provision shell scripts.
+      script: "{{ item }}"
+      with_items: post_provision_scripts
