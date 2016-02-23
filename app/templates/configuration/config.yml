@@ -85,19 +85,19 @@ apache_vhosts:
   - servername: "adminer.{{ drupal_domain }}"
     documentroot: "{{ adminer_install_dir }}"
     extra_parameters: |
-          ProxyPassMatch ^/(.*\.php(/.*)?)$ "unix:/var/run/php5-fpm.sock|fcgi://127.0.0.1:9000{{ adminer_install_dir }}"
+          ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ adminer_install_dir }}"
 
   - servername: "xhprof.{{ drupal_domain }}"
     documentroot: "{{ php_xhprof_html_dir }}"
     extra_parameters: |
-          ProxyPassMatch ^/(.*\.php(/.*)?)$ "unix:/var/run/php5-fpm.sock|fcgi://127.0.0.1:9000{{ php_xhprof_html_dir }}"
+          ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ php_xhprof_html_dir }}"
 
   - servername: "pimpmylog.{{ drupal_domain }}"
     documentroot: "{{ pimpmylog_install_dir }}"
     extra_parameters: |
-          ProxyPassMatch ^/(.*\.php(/.*)?)$ "unix:/var/run/php5-fpm.sock|fcgi://127.0.0.1:9000{{ pimpmylog_install_dir }}"
+          ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ pimpmylog_install_dir }}"
 
-  - servername: "{{ vagrant_ip }}"
+  - servername: "dashboard.{{ drupal_domain }}"
     documentroot: "{{ dashboard_install_dir }}"
 
 apache_remove_default_vhost: true
@@ -128,7 +128,7 @@ nginx_hosts:
     root: "{{ pimpmylog_install_dir }}"
     is_php: true
 
-  - servername: "{{ vagrant_ip }}"
+  - servername: "dashboard.{{ drupal_domain }}"
     root: "{{ dashboard_install_dir }}"
 
 nginx_remove_default_vhost: true
