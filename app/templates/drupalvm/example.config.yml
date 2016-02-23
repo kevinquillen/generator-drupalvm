@@ -37,7 +37,7 @@ drupalvm_webserver: apache
 # Set this to false if you are using a different site deployment strategy and
 # would like to configure 'vagrant_synced_folders' and 'apache_vhosts' manually.
 build_makefile: true
-drush_makefile_path: /vagrant/drupal.make.yml
+drush_makefile_path: ../../drupal.make.yml
 
 # Set this to false if you don't need to install drupal (using the drupal_*
 # settings below), but instead copy down a database (e.g. using drush sql-sync).
@@ -47,7 +47,7 @@ install_site: true
 # is 'true').
 drupal_major_version: 8
 drupal_core_path: "/var/www/drupalvm/drupal"
-drupal_domain: "drupalvm.dev"
+drupal_domain: "{{ vagrant_hostname }}"
 drupal_site_name: "Drupal"
 drupal_install_profile: standard
 drupal_enable_modules: [ 'devel' ]
@@ -82,20 +82,31 @@ apache_vhosts:
     extra_parameters: |
           ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ drupal_core_path }}"
 
-  - servername: "adminer.drupalvm.dev"
-    documentroot: "/opt/adminer"
+  - servername: "adminer.{{ vagrant_hostname }}"
+    documentroot: "{{ adminer_install_dir }}"
+    extra_parameters: |
+          ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ adminer_install_dir }}"
 
-  - servername: "xhprof.drupalvm.dev"
-    documentroot: "/usr/share/php/xhprof_html"
+  - servername: "xhprof.{{ vagrant_hostname }}"
+    documentroot: "{{ php_xhprof_html_dir }}"
+    extra_parameters: |
+          ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ php_xhprof_html_dir }}"
 
-  - servername: "pimpmylog.drupalvm.dev"
-    documentroot: "/usr/share/php/pimpmylog"
+  - servername: "pimpmylog.{{ vagrant_hostname }}"
+    documentroot: "{{ pimpmylog_install_dir }}"
+    extra_parameters: |
+          ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ pimpmylog_install_dir }}"
+
+  - servername: "{{ vagrant_ip }}"
+    documentroot: "{{ dashboard_install_dir }}"
 
 apache_remove_default_vhost: true
 apache_mods_enabled:
   - expires.load
   - ssl.load
   - rewrite.load
+  - proxy.load
+  - proxy_fcgi.load
 
 # Nginx hosts. Each site will get a server entry using the configuration defined
 # here. Set the 'is_php' property for document roots that contain PHP apps like
@@ -105,17 +116,20 @@ nginx_hosts:
     root: "{{ drupal_core_path }}"
     is_php: true
 
-  - server_name: "adminer.drupalvm.dev"
-    root: "/opt/adminer"
+  - server_name: "adminer.{{ vagrant_hostname }}"
+    root: "{{ adminer_install_dir }}"
     is_php: true
 
-  - server_name: "xhprof.drupalvm.dev"
-    root: "/usr/share/php/xhprof_html"
+  - server_name: "xhprof.{{ vagrant_hostname }}"
+    root: "{{ php_xhprof_html_dir }}"
     is_php: true
 
-  - server_name: "pimpmylog.drupalvm.dev"
-    root: "/usr/share/php/pimpmylog"
+  - server_name: "pimpmylog.{{ vagrant_hostname }}"
+    root: "{{ pimpmylog_install_dir }}"
     is_php: true
+
+  - server_name: "{{ vagrant_ip }}"
+    root: "{{ dashboard_install_dir }}"
 
 nginx_remove_default_vhost: true
 
@@ -153,7 +167,8 @@ installed_extras:
 extra_packages:
   - unzip
 
-# `nodejs` must be in installed_extras for this to work.
+# `nodejs` must be in installed_extras for this to work. Valid examples: "0.10",
+# "0.12", "4.x", "5.x".
 nodejs_version: "0.12"
 nodejs_npm_global_packages: []
 
@@ -164,7 +179,7 @@ ruby_install_gems: []
 # You can configure almost anything else on the server in the rest of this file.
 extra_security_enabled: false
 
-drush_version: master
+drush_version: "master"
 drush_keep_updated: true
 drush_composer_cli_options: "--prefer-dist --no-interaction"
 
@@ -186,13 +201,18 @@ php_version: "5.6"
 php_memory_limit: "192M"
 php_display_errors: "On"
 php_display_startup_errors: "On"
-php_enable_php_fpm: true
 php_realpath_cache_size: "1024K"
 php_sendmail_path: "/usr/sbin/ssmtp -t"
 php_opcache_enabled_in_ini: true
 php_opcache_memory_consumption: "192"
 php_opcache_max_accelerated_files: 4096
 php_max_input_vars: "4000"
+
+# Drupal VM defaults to using PHP-FPM with either Apache or Nginx. If you wish
+# to instead use Apache + mod_php with an Ubuntu base box, make sure you add
+# libapache2-mod-php5 to `extra_packages` elsewhere in this config file.
+php_enable_php_fpm: true
+php_fpm_listen: "127.0.0.1:9000"
 
 composer_path: /usr/bin/composer
 composer_home_path: '/home/vagrant/.composer'
@@ -240,4 +260,5 @@ solr_xmx: "128M"
 selenium_version: 2.46.0
 
 # Other configuration.
+dashboard_install_dir: /var/www/dashboard
 known_hosts_path: ~/.ssh/known_hosts

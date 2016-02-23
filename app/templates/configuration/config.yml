@@ -83,25 +83,30 @@ apache_vhosts:
           ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ drupal_core_path }}"
 
   - servername: "adminer.{{ drupal_domain }}"
-    documentroot: "/opt/adminer"
+    documentroot: "{{ adminer_install_dir }}"
     extra_parameters: |
-          ProxyPassMatch ^/(.*\.php(/.*)?)$ "unix:/var/run/php5-fpm.sock|fcgi://127.0.0.1:9000/opt/adminer"
+          ProxyPassMatch ^/(.*\.php(/.*)?)$ "unix:/var/run/php5-fpm.sock|fcgi://127.0.0.1:9000{{ adminer_install_dir }}"
 
   - servername: "xhprof.{{ drupal_domain }}"
-    documentroot: "/usr/share/php/xhprof_html"
+    documentroot: "{{ php_xhprof_html_dir }}"
     extra_parameters: |
-          ProxyPassMatch ^/(.*\.php(/.*)?)$ "unix:/var/run/php5-fpm.sock|fcgi://127.0.0.1:9000/usr/share/php/xhprof_html"
+          ProxyPassMatch ^/(.*\.php(/.*)?)$ "unix:/var/run/php5-fpm.sock|fcgi://127.0.0.1:9000{{ php_xhprof_html_dir }}"
 
   - servername: "pimpmylog.{{ drupal_domain }}"
-    documentroot: "/usr/share/php/pimpmylog"
+    documentroot: "{{ pimpmylog_install_dir }}"
     extra_parameters: |
-          ProxyPassMatch ^/(.*\.php(/.*)?)$ "unix:/var/run/php5-fpm.sock|fcgi://127.0.0.1:9000/usr/share/php/pimpmylog"
+          ProxyPassMatch ^/(.*\.php(/.*)?)$ "unix:/var/run/php5-fpm.sock|fcgi://127.0.0.1:9000{{ pimpmylog_install_dir }}"
+
+  - servername: "{{ vagrant_ip }}"
+    documentroot: "{{ dashboard_install_dir }}"
 
 apache_remove_default_vhost: true
 apache_mods_enabled:
   - expires.load
   - ssl.load
   - rewrite.load
+  - proxy.load
+  - proxy_fcgi.load
 
 # Nginx hosts. Each site will get a server entry using the configuration defined
 # here. Set the 'is_php' property for document roots that contain PHP apps like
@@ -112,16 +117,19 @@ nginx_hosts:
     is_php: true
 
   - server_name: "adminer.{{ drupal_domain }}"
-    root: "/opt/adminer"
+    root: "{{ adminer_install_dir }}"
     is_php: true
 
   - server_name: "xhprof.{{ drupal_domain }}"
-    root: "/usr/share/php/xhprof_html"
+    root: "{{ php_xhprof_html_dir }}"
     is_php: true
 
   - server_name: "pimpmylog.{{ drupal_domain }}"
-    root: "/usr/share/php/pimpmylog"
+    root: "{{ pimpmylog_install_dir }}"
     is_php: true
+
+  - servername: "{{ vagrant_ip }}"
+    root: "{{ dashboard_install_dir }}"
 
 nginx_remove_default_vhost: true
 
@@ -157,7 +165,11 @@ installed_extras:
 extra_packages:
   - unzip
 
-# `nodejs` must be in installed_extras for this to work.
+# `nodejs` must be in installed_extras for this to work. This currently only
+# runs on the initial provision. If the version needs to chanage 'nvm' will need
+# to be installed and configured manually.
+# The nodejs role uses the Nodesource binary sources
+# 4.x, 5.x, 0.12, or 0.10 are acceptable versions.
 nodejs_version: "0.12"
 nodejs_npm_global_packages: []
 
@@ -168,7 +180,7 @@ ruby_install_gems: []
 # You can configure almost anything else on the server in the rest of this file.
 extra_security_enabled: false
 
-drush_version: master
+drush_version: "master"
 drush_keep_updated: true
 drush_composer_cli_options: "--prefer-dist --no-interaction"
 
@@ -250,4 +262,5 @@ solr_xmx: "128M"
 selenium_version: 2.46.0
 
 # Other configuration.
+dashboard_install_dir: /var/www/dashboard
 known_hosts_path: ~/.ssh/known_hosts

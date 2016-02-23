@@ -3,6 +3,7 @@
   become: yes
 
   vars_files:
+    - vars/main.yml
     - ../config.yml
 
   pre_tasks:
@@ -76,6 +77,10 @@
     - include: tasks/drush-aliases.yml
     - include: tasks/cron.yml
 
+    - include: tasks/dashboard.yml
+      when: dashboard_install_dir is defined
+
     - name: Run configured post-provision shell scripts.
       script: "{{ item }}"
       with_items: post_provision_scripts
+      when: post_provision_scripts is defined
