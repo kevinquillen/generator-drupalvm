@@ -77,28 +77,28 @@ configure_local_drush_aliases: true
 # multisite deployments, you can point multiple servernames at one documentroot.
 # View the geerlingguy.apache Ansible Role README for more options.
 apache_vhosts:
-  - servername: "{{ drupal_domain }}"
+  - servername: "<%= vagrant_hostname %>"
     documentroot: "{{ drupal_core_path }}"
     extra_parameters: |
           ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ drupal_core_path }}"
 
-  - servername: "adminer.{{ vagrant_hostname }}"
+  - servername: "adminer.<%= vagrant_hostname %>"
     documentroot: "{{ adminer_install_dir }}"
     extra_parameters: |
           ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ adminer_install_dir }}"
 
-  - servername: "xhprof.{{ vagrant_hostname }}"
+  - servername: "xhprof.<%= vagrant_hostname %>"
     documentroot: "{{ php_xhprof_html_dir }}"
     extra_parameters: |
           ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ php_xhprof_html_dir }}"
 
-  - servername: "pimpmylog.{{ vagrant_hostname }}"
+  - servername: "pimpmylog.<%= vagrant_hostname %>"
     documentroot: "{{ pimpmylog_install_dir }}"
     extra_parameters: |
           ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ pimpmylog_install_dir }}"
 
-  - servername: "{{ vagrant_ip }}"
-    serveralias: "dashboard.{{ vagrant_hostname }}"
+  - servername: "<%= vagrant_ip %>"
+    serveralias: "dashboard.<%= vagrant_hostname %>"
     documentroot: "{{ dashboard_install_dir }}"
 
 apache_remove_default_vhost: true
@@ -113,23 +113,23 @@ apache_mods_enabled:
 # here. Set the 'is_php' property for document roots that contain PHP apps like
 # Drupal.
 nginx_hosts:
-  - server_name: "{{ drupal_domain }}"
+  - server_name: "<%= vagrant_hostname %>"
     root: "{{ drupal_core_path }}"
     is_php: true
 
-  - server_name: "adminer.{{ vagrant_hostname }}"
+  - server_name: "adminer.<%= vagrant_hostname %>"
     root: "{{ adminer_install_dir }}"
     is_php: true
 
-  - server_name: "xhprof.{{ vagrant_hostname }}"
+  - server_name: "xhprof.<%= vagrant_hostname %>"
     root: "{{ php_xhprof_html_dir }}"
     is_php: true
 
-  - server_name: "pimpmylog.{{ vagrant_hostname }}"
+  - server_name: "pimpmylog.<%= vagrant_hostname %>"
     root: "{{ pimpmylog_install_dir }}"
     is_php: true
 
-  - server_name: "{{ vagrant_ip }} dashboard.{{ vagrant_hostname }}"
+  - server_name: "<%= vagrant_ip %> dashboard.<%= vagrant_hostname %>"
     root: "{{ dashboard_install_dir }}"
 
 nginx_remove_default_vhost: true
