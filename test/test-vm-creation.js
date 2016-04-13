@@ -24,13 +24,14 @@ describe('drupalvm:app', function () {
           'vagrant_hostname': 'mochatest',
           'vagrant_machine_name': 'mochatest',
           'drupalvm_webserver': 'nginx',
-          'packages': ['adminer', 'pimpmylog', 'solr', 'xdebug'],
+          'packages': ['adminer', 'drupalconsole', 'pimpmylog', 'redis', 'solr', 'selenium', 'xdebug'],
           'vagrant_ip': '0.0.0.0',
           'sync_type': 'rsync',
-          'vagrant_memory': 1024,
+          'vagrant_memory': 2048,
           'vagrant_cpus': 1,
           'php_version': '5.6',
           'php_memory_limit': 128,
+          'selenium_version': '2.48.2'
         })
         .on('end', function () {
           assert.file(expectedFiles);
@@ -41,14 +42,17 @@ describe('drupalvm:app', function () {
           assert.fileContent(vm_config, /drupalvm_webserver: nginx/);
           assert.fileContent(vm_config, /vagrant_ip: 0.0.0.0/);
           assert.fileContent(vm_config, /type: rsync/);
-          assert.fileContent(vm_config, /vagrant_memory: 1024/);
+          assert.fileContent(vm_config, /vagrant_memory: 2048/);
           assert.fileContent(vm_config, /vagrant_cpus: 1/);
           assert.fileContent(vm_config, /php_version: "5.6"/);
           assert.fileContent(vm_config, /- adminer/);
+          assert.fileContent(vm_config, /- drupalconsole/);
           assert.fileContent(vm_config, /- pimpmylog/);
+          assert.fileContent(vm_config, /- redis/);
           assert.fileContent(vm_config, /- solr/);
           assert.fileContent(vm_config, /- xdebug/);
           assert.fileContent(vm_config, /#- nodejs/);
+          assert.fileContent(vm_config, /selenium_version: 2.48.2/);
           done();
         });
     });
