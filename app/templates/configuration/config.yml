@@ -37,7 +37,7 @@ drupalvm_webserver: <%= drupalvm_webserver %>
 # Set this to false if you are using a different site deployment strategy and
 # would like to configure 'vagrant_synced_folders' and 'apache_vhosts' manually.
 build_makefile: <%= install_drupal %>
-drush_makefile_path: /vagrant/drupal.make.yml
+drush_makefile_path: ../../drupal.make.yml
 
 # Set this to false if you don't need to install drupal (using the drupal_*
 # settings below), but instead copy down a database (e.g. using drush sql-sync).
@@ -47,10 +47,10 @@ install_site: <%= install_drupal %>
 # is 'true').
 drupal_major_version: <%= drupal_version %>
 drupal_core_path: "/var/www/docroot"
-drupal_domain: "<%= vagrant_hostname %>"
+drupal_domain: "{{ vagrant_hostname }}"
 drupal_site_name: "Drupal"
 drupal_install_profile: standard
-drupal_enable_modules: []
+drupal_enable_modules: [ 'devel' ]
 drupal_account_name: admin
 drupal_account_pass: admin
 drupal_mysql_user: drupal
@@ -82,22 +82,23 @@ apache_vhosts:
     extra_parameters: |
           ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ drupal_core_path }}"
 
-  - servername: "adminer.{{ drupal_domain }}"
+  - servername: "adminer.{{ vagrant_hostname }}"
     documentroot: "{{ adminer_install_dir }}"
     extra_parameters: |
           ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ adminer_install_dir }}"
 
-  - servername: "xhprof.{{ drupal_domain }}"
+  - servername: "xhprof.{{ vagrant_hostname }}"
     documentroot: "{{ php_xhprof_html_dir }}"
     extra_parameters: |
           ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ php_xhprof_html_dir }}"
 
-  - servername: "pimpmylog.{{ drupal_domain }}"
+  - servername: "pimpmylog.{{ vagrant_hostname }}"
     documentroot: "{{ pimpmylog_install_dir }}"
     extra_parameters: |
           ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ pimpmylog_install_dir }}"
 
-  - servername: "dashboard.{{ drupal_domain }}"
+  - servername: "{{ vagrant_ip }}"
+    serveralias: "dashboard.{{ vagrant_hostname }}"
     documentroot: "{{ dashboard_install_dir }}"
 
 apache_remove_default_vhost: true
@@ -116,22 +117,23 @@ nginx_hosts:
     root: "{{ drupal_core_path }}"
     is_php: true
 
-  - server_name: "adminer.{{ drupal_domain }}"
+  - server_name: "adminer.{{ vagrant_hostname }}"
     root: "{{ adminer_install_dir }}"
     is_php: true
 
-  - server_name: "xhprof.{{ drupal_domain }}"
+  - server_name: "xhprof.{{ vagrant_hostname }}"
     root: "{{ php_xhprof_html_dir }}"
     is_php: true
 
-  - server_name: "pimpmylog.{{ drupal_domain }}"
+  - server_name: "pimpmylog.{{ vagrant_hostname }}"
     root: "{{ pimpmylog_install_dir }}"
     is_php: true
 
-  - servername: "dashboard.{{ drupal_domain }}"
+  - server_name: "{{ vagrant_ip }} dashboard.{{ vagrant_hostname }}"
     root: "{{ dashboard_install_dir }}"
 
 nginx_remove_default_vhost: true
+nginx_ppa_use: true
 
 # MySQL Databases and users. If build_makefile: is true, first database will
 # be used for the makefile-built site.
@@ -150,10 +152,12 @@ mysql_users:
 # to install *any* extras, make set this value to an empty set, e.g. `[]`.
 installed_extras:
   <%= install_adminer %>
+  <%= install_drupalconsole %>
   <%= install_mailhog %>
   <%= install_memcached %>
   <%= install_nodejs %>
   <%= install_pimpmylog %>
+  <%= install_redis %>
   <%= install_ruby %>
   <%= install_selenium %>
   <%= install_solr %>
@@ -165,16 +169,13 @@ installed_extras:
 extra_packages:
   - unzip
 
-# `nodejs` must be in installed_extras for this to work. This currently only
-# runs on the initial provision. If the version needs to chanage 'nvm' will need
-# to be installed and configured manually.
-# The nodejs role uses the Nodesource binary sources
-# 4.x, 5.x, 0.12, or 0.10 are acceptable versions.
+# `nodejs` must be in installed_extras for this to work. Valid examples: "0.10",
+# "0.12", "4.x", "5.x".
 nodejs_version: "0.12"
 nodejs_npm_global_packages: []
 
 # `ruby` must be in installed_extras for this to work.
-ruby_install_gems_user: "{{ vagrant_user }}"
+ruby_install_gems_user: "{{ drupalvm_user }}"
 ruby_install_gems: []
 
 # You can configure almost anything else on the server in the rest of this file.
@@ -197,12 +198,11 @@ firewall_allowed_tcp_ports:
   - "8983"
 firewall_log_dropped_packets: false
 
-# PHP Configuration. Currently-supported versions: 5.5, 5.6, 7.0 (experimental).
+# PHP Configuration. Currently-supported versions: 5.5, 5.6, 7.0.
 php_version: "<%= php_version %>"
 php_memory_limit: "<%= php_memory_limit %>M"
 php_display_errors: "On"
 php_display_startup_errors: "On"
-php_enable_php_fpm: true
 php_realpath_cache_size: "1024K"
 php_sendmail_path: "/usr/sbin/ssmtp -t"
 php_opcache_enabled_in_ini: true
@@ -217,7 +217,9 @@ php_enable_php_fpm: true
 php_fpm_listen: "127.0.0.1:9000"
 
 composer_path: /usr/bin/composer
-composer_home_path: '/home/vagrant/.composer'
+composer_home_path: "/home/{{ drupalvm_user }}/.composer"
+composer_home_owner: "{{ drupalvm_user }}"
+composer_home_group: "{{ drupalvm_user }}"
 # composer_global_packages:
 #   - { name: phpunit/phpunit, release: '@stable' }
 
@@ -246,7 +248,7 @@ pimpmylog_grant_all_privs: true
 # XDebug configuration. XDebug is disabled by default for better performance.
 php_xdebug_default_enable: <%= enable_xdebug %>
 php_xdebug_coverage_enable: 0
-php_xdebug_cli_enable: 0
+php_xdebug_cli_enable: 1
 php_xdebug_remote_enable: 1
 php_xdebug_remote_connect_back: 1
 # Use PHPSTORM for PHPStorm, sublime.xdebug for Sublime Text.
@@ -259,7 +261,7 @@ solr_xms: "64M"
 solr_xmx: "128M"
 
 # Selenium configuration.
-selenium_version: 2.46.0
+selenium_version: <%= selenium_version %>
 
 # Other configuration.
 dashboard_install_dir: /var/www/dashboard
