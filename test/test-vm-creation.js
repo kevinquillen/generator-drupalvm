@@ -39,6 +39,7 @@ describe('drupalvm:app', function () {
           assert.fileContent(vm_config, /drupal_major_version: 7/);
           assert.fileContent(vm_config, /vagrant_hostname: mochatest/);
           assert.fileContent(vm_config, /vagrant_machine_name: mochatest/);
+          assert.fileContent(vm_config, /adminer.mochatest/);
           assert.fileContent(vm_config, /drupalvm_webserver: nginx/);
           assert.fileContent(vm_config, /vagrant_ip: 0.0.0.0/);
           assert.fileContent(vm_config, /type: rsync/);
