@@ -112,6 +112,10 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
             checked: true
           },
           {
+            name: 'drupalconsole',
+            checked: true
+          },
+          {
             name: 'mailhog',
             checked: true
           },
@@ -125,6 +129,10 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
           },
           {
             name: 'pimpmylog',
+            checked: false
+          },
+          {
+            name: 'redis',
             checked: false
           },
           {
@@ -181,6 +189,15 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
         when: function(props) {
           return this._contains(props.packages, 'solr');
         }.bind(this)
+      },
+      {
+        type: 'input',
+        name: 'selenium_version',
+        message: 'What version of Selenium do you want to install?',
+        default: '2.46.0',
+        when: function(props) {
+          return this._contains(props.packages, 'selenium');
+        }.bind(this)
       }
     ];
 
@@ -224,12 +241,15 @@ var DrupalVMGenerator = yeoman.generators.Base.extend({
         php_version: this.props.php_version,
         php_memory_limit: this.props.php_memory_limit,
         solr_version: this._contains(this.props.packages, 'solr') ? this.props.solr_version : '4.10.4',
+        selenium_version: this._contains(this.props.packages, 'selenium') ? this.props.selenium_version : '2.46.0',
         enable_xdebug: this._contains(this.props.packages, 'xdebug') ? 1 : 0,
         install_adminer: this._contains(this.props.packages, 'adminer') ? '- adminer' : '#- adminer',
+        install_drupalconsole: this._contains(this.props.packages, 'drupalconsole') ? '- drupalconsole' : '#- drupalconsole',
         install_mailhog: this._contains(this.props.packages, 'mailhog') ? '- mailhog' : '#- mailhog',
         install_memcached: this._contains(this.props.packages, 'memcached') ? '- memcached' : '#- memcached',
         install_nodejs: this._contains(this.props.packages, 'nodejs') ? '- nodejs' : '#- nodejs',
         install_pimpmylog: this._contains(this.props.packages, 'pimpmylog') ? '- pimpmylog' : '#- pimpmylog',
+        install_redis: this._contains(this.props.packages, 'redis') ? '- redis' : '#- redis',
         install_ruby: this._contains(this.props.packages, 'ruby') ? '- ruby' : '#- ruby',
         install_selenium: this._contains(this.props.packages, 'selenium') ? '- selenium' : '#- selenium',
         install_solr: this._contains(this.props.packages, 'solr') ? '- solr' : '#- solr',
