@@ -15,7 +15,7 @@ projects:
     download:
       # Drupal core branch (e.g. "6.x", "7.x", "8.0.x").
       branch: "<%= drupal_core_branch %>"
-      working-copy: false
+      working-copy: true
 
   # Other modules.
-  #devel: "1.x-dev"
+  devel: "1.x-dev"
